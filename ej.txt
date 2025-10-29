@@ -1,0 +1,71 @@
+# Gramática simplificada para el subconjunto de Python soportado
+
+file_input -> stmt_list
+
+stmt_list -> stmt stmt_list | ε
+
+stmt -> simple_stmt | compound_stmt
+
+simple_stmt -> small_stmt ';' simple_stmt | small_stmt
+
+small_stmt -> assignment | return_stmt | pass_stmt | break_stmt | continue_stmt | expr_stmt
+
+assignment -> 'id' '=' expr
+return_stmt -> 'return' expr | 'return'
+pass_stmt -> 'pass'
+break_stmt -> 'break'
+continue_stmt -> 'continue'
+
+expr_stmt -> expr
+
+compound_stmt -> if_stmt | while_stmt | for_stmt | funcdef
+
+if_stmt -> 'if' expr ':' suite elif_part else_part
+elif_part -> 'elif' expr ':' suite elif_part | ε
+else_part -> 'else' ':' suite | ε
+
+while_stmt -> 'while' expr ':' suite
+for_stmt -> 'for' 'id' 'in' expr ':' suite
+
+funcdef -> 'def' 'id' '(' param_list ')' ':' suite
+param_list -> param_list_nonempty | ε
+param_list_nonempty -> 'id' more_params
+more_params -> ',' 'id' more_params | ε
+
+suite -> simple_stmt | NEWLINE INDENT stmt_list DEDENT
+
+expr -> or_test
+or_test -> and_test or_rest
+or_rest -> 'or' and_test or_rest | ε
+and_test -> not_test and_rest
+and_rest -> 'and' not_test and_rest | ε
+not_test -> 'not' not_test | comparison
+
+comparison -> arith_expr comp_rest
+comp_rest -> comp_op arith_expr comp_rest | ε
+comp_op -> '<' | '>' | '==' | '!=' | '<=' | '>=' | 'in' | 'is'
+
+arith_expr -> term arith_rest
+arith_rest -> add_op term arith_rest | ε
+add_op -> '+' | '-'
+
+term -> factor term_rest
+term_rest -> mul_op factor term_rest | ε
+mul_op -> '*' | '/' | '%' | '//'
+
+factor -> '+' factor | '-' factor | power
+
+power -> atom power_rest
+power_rest -> '**' factor | ε
+
+atom -> 'id' | 'tk_entero' | 'tk_cadena' | '(' expr ')' | '[' expr_list ']' | '{' dict_items '}'
+
+expr_list -> expr expr_list_rest | ε
+expr_list_rest -> ',' expr expr_list_rest | ε
+
+dict_items -> dict_item dict_items_rest | ε
+dict_items_rest -> ',' dict_item dict_items_rest | ε
+dict_item -> expr ':' expr
+
+# terminales: 'id', 'tk_entero', 'tk_cadena', palabras clave, signos, NEWLINE, INDENT, DEDENT
+
