@@ -1,5 +1,3 @@
-# Gramática simplificada para el subconjunto de Python soportado
-
 file_input -> stmt_list
 
 stmt_list -> stmt stmt_list | ε
@@ -68,4 +66,3 @@ dict_items_rest -> ',' dict_item dict_items_rest | ε
 dict_item -> expr ':' expr
 
 # terminales: 'id', 'tk_entero', 'tk_cadena', palabras clave, signos, NEWLINE, INDENT, DEDENT
-

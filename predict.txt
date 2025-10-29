@@ -1,0 +1,6 @@
+PREDICT(E -> E + T) = {(, id}
+PREDICT(E -> T) = {(, id}
+PREDICT(T -> T * F) = {(, id}
+PREDICT(T -> F) = {(, id}
+PREDICT(F -> ( E )) = {(}
+PREDICT(F -> id) = {id}

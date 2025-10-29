@@ -1,0 +1,3 @@
+FIRST(E) = {(, id}
+FIRST(T) = {(, id}
+FIRST(F) = {(, id}

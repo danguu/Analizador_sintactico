@@ -96,6 +96,12 @@ class Parser:
             if self.cur() and self.cur().tipo not in ("NEWLINE", "DEDENT"):
                 self.testlist()
             return
+        if tok.lex == "import":
+            self.import_stmt()
+            return
+        if tok.lex == "from":
+            self.from_import_stmt()
+            return
         if tok.lex in ("pass", "break", "continue"):
             self.adv()
             return
@@ -118,6 +124,11 @@ class Parser:
                 if n_asg == 0:
                     self.error_lex(self.cur(), ['"="'])
                 return
+            if tok.lex == "print":
+                if j < len(self.t):
+                    nxt = self.t[j]
+                    if nxt.lex != "(" and nxt.tipo not in ("NEWLINE", "DEDENT"):
+                        self.error_lex(nxt, ["("])
         self.testlist()
 
     def compound_stmt(self):
@@ -388,6 +399,69 @@ class Parser:
                 self.test()
                 return
         self.test()
+
+    # === Imports ===
+    def import_stmt(self):
+        self.need_lex("import")
+        self.dotted_as_names()
+
+    def from_import_stmt(self):
+        self.need_lex("from")
+        saw_module = False
+        while self.cur() and self.cur().lex == ".":
+            saw_module = True
+            self.adv()
+        if self.cur() and self.cur().tipo == "id":
+            self.dotted_name()
+            saw_module = True
+        if not saw_module:
+            self.error_lex(self.cur(), ["identificador", "."])
+        self.need_lex("import")
+        if self.cur() and self.cur().lex == "*":
+            self.adv()
+            return
+        if self.cur() and self.cur().lex == "(":
+            self.adv()
+            if self.cur() and self.cur().lex != ")":
+                self.import_as_names()
+            self.need_lex(")")
+            return
+        self.import_as_names()
+
+    def dotted_name(self):
+        self.need_tipo("id")
+        while self.cur() and self.cur().lex == ".":
+            self.adv()
+            self.need_tipo("id")
+
+    def dotted_as_names(self):
+        self.dotted_as_name()
+        while self.cur() and self.cur().lex == ",":
+            comma_tok = self.cur()
+            self.adv()
+            if self.cur() and self.cur().tipo in ("NEWLINE", "DEDENT"):
+                self.error_lex(comma_tok, ["identificador"])
+            self.dotted_as_name()
+
+    def dotted_as_name(self):
+        self.dotted_name()
+        if self.cur() and self.cur().lex == "as":
+            self.adv()
+            self.need_tipo("id")
+
+    def import_as_names(self):
+        self.import_as_name()
+        while self.cur() and self.cur().lex == ",":
+            self.adv()
+            if self.cur() and self.cur().lex == ")":
+                break
+            self.import_as_name()
+
+    def import_as_name(self):
+        self.need_tipo("id")
+        if self.cur() and self.cur().lex == "as":
+            self.adv()
+            self.need_tipo("id")
 
 
 def analizar(source: str):

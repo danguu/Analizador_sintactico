@@ -1,2 +1,1 @@
-<2,1> Error sintactico: se encontro: "
-"; se esperaba: ":".
+<2,11> Error sintactico: se encontro: "i"; se esperaba: "(".

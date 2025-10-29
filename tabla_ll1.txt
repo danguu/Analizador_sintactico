@@ -1,0 +1,10 @@
+NT \ a              $                   
+E                                       
+T                                       
+F                                       
+
+# Conflictos LL(1):
+# conflicto en M[E,(]: 0 vs 1
+# conflicto en M[E,id]: 0 vs 1
+# conflicto en M[T,(]: 0 vs 1
+# conflicto en M[T,id]: 0 vs 1
